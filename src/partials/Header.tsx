@@ -28,7 +28,7 @@ export default function Header() {
     >
       <Container fluid>
         <Navbar.Brand className="me-5" as={Link} to="/">
-          My webapp
+          HackLog
         </Navbar.Brand>
         <Navbar.Toggle onClick={() => setExpanded(!expanded)} />
         <Navbar.Collapse id="basic-navbar-nav">
