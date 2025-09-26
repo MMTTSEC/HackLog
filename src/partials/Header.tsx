@@ -22,9 +22,9 @@ export default function Header() {
     <Navbar
       expanded={expanded}
       expand="md"
-      className="bg-primary"
-      data-bs-theme="dark"
+      data-bs-theme="light"
       fixed="top"
+      style={{ backgroundColor: 'transparent' }}
     >
       <Container fluid>
         <Navbar.Brand className="me-5" as={Link} to="/">
