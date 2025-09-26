@@ -1,4 +1,4 @@
-import { Row, Col } from 'react-bootstrap';
+import TextType from '../components/TextType';
 
 Start.route = {
   path: '/',
@@ -39,7 +39,21 @@ export default function Start() {
       zIndex: 1
     }}>
       <h1 className="display-4 mb-3">Welcome to HackLog</h1>
-      <p className="lead">Your daily dose of cyber insight.</p>
+      <TextType 
+        text={[
+          "Your daily dose of cyber insight.",
+          "Master the art of ethical hacking.",
+          "Stay ahead of security threats.",
+          "Learn, practice, and protect."
+        ]}
+        typingSpeed={75}
+        pauseDuration={1500}
+        showCursor={true}
+        cursorCharacter="|"
+        className="lead"
+        variableSpeed={undefined}
+        onSentenceComplete={undefined}
+      />
     </div>
   </div>
 }
