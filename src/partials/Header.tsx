@@ -24,7 +24,9 @@ export default function Header() {
       expand="md"
       data-bs-theme="light"
       fixed="top"
-      style={{ backgroundColor: 'transparent' }}
+      style={{ 
+        backgroundColor: 'transparent'
+      }}
     >
       <Container fluid>
         <Navbar.Brand className="me-5" as={Link} to="/">

@@ -2,7 +2,6 @@ import { Row, Col } from 'react-bootstrap';
 
 Start.route = {
   path: '/',
-  menuLabel: 'Start',
   index: 1
 }
 
