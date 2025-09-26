@@ -39,7 +39,7 @@ export default function Start() {
       zIndex: 1
     }}>
       <h1 className="display-4 mb-3">Welcome to HackLog</h1>
-      <p className="lead">Your ultimate hacking journey starts here</p>
+      <p className="lead">Your daily dose of cyber insight.</p>
     </div>
   </div>
 }
