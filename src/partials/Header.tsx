@@ -30,12 +30,14 @@ export default function Header() {
       }}
     >
       <Container fluid>
-        <Navbar.Brand className="me-5" as={Link} to="/">
-          HackLog
-        </Navbar.Brand>
-        <Navbar.Toggle onClick={() => setExpanded(!expanded)} />
+        <div className="d-flex w-100 justify-content-between align-items-center">
+          <Navbar.Brand as={Link} to="/">
+            HackLog
+          </Navbar.Brand>
+          <Navbar.Toggle onClick={() => setExpanded(!expanded)} />
+        </div>
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
+          <Nav className="w-100 justify-content-center">
             {routes.filter(x => x.menuLabel).map(
               ({ menuLabel, path }, i) =>
                 <Nav.Link
