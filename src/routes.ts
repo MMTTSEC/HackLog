@@ -5,6 +5,7 @@ import NotFoundPage from './pages/NotFoundPage.tsx';
 import Start from './pages/Start.tsx';
 import Login from './pages/Login.tsx';
 import Articles from './pages/Articles.tsx';
+import Admin from './pages/Admin.tsx';
 
 interface Route {
   element: JSX.Element;
@@ -19,7 +20,8 @@ export default [
   NotFoundPage,
   Start,
   Login,
-  Articles
+  Articles,
+  Admin
 ]
   // map the route property of each page component to a Route
   .map(x => (({ element: createElement(x), ...x.route }) as Route))
