@@ -15,11 +15,21 @@ $enable-negative-margins: true;
 .navbar-brand {
   font-family: 'Chewy';
   font-size: 24px;
+  color: #ffffff !important; 
 }
 
 .navbar-nav .nav-link {
   font-size: 16px;
   font-weight: 500;
+  color: #ffffff !important; 
+}
+
+.navbar-nav .nav-link:hover {
+  color: #cccccc !important; 
+}
+
+.navbar-nav .nav-link.active {
+  color: #ffffff !important; 
 }
 
 .container {

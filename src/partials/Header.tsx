@@ -22,10 +22,11 @@ export default function Header() {
     <Navbar
       expanded={expanded}
       expand="md"
-      data-bs-theme="light"
+      data-bs-theme="dark"
       fixed="top"
       style={{ 
-        backgroundColor: 'transparent'
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        backdropFilter: 'blur(5px)',
       }}
     >
       <Container fluid>
