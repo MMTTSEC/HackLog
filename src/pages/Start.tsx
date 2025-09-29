@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 import TextType from '../components/TextType';
 
 Start.route = {
@@ -6,54 +8,64 @@ Start.route = {
 }
 
 export default function Start() {
-  return <div className="hero-section" style={{
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    backgroundImage: 'url(/images/hero.gif)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: -1
-  }}>
-    {/* Black overlay */}
-    <div style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      backgroundColor: 'rgba(0, 0, 0, 0.6)', // Black overlay with 50% opacity
-      zIndex: 0
-    }}></div>
-    
-    <div className="hero-content text-center text-white" style={{
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      padding: '2rem',
-      borderRadius: '10px',
-      zIndex: 1
-    }}>
-      <h1 className="display-4 mb-3">Welcome to HackLog</h1>
-      <TextType 
-        text={[
-          "Your daily dose of cyber insight.",
-          "Master the art of ethical hacking.",
-          "Stay ahead of security threats.",
-          "Learn, practice, and protect."
-        ]}
-        typingSpeed={75}
-        pauseDuration={1500}
-        showCursor={true}
-        cursorCharacter="|"
-        className="lead"
-        variableSpeed={undefined}
-        onSentenceComplete={undefined}
-      />
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroRef.current) {
+        const scrolled = window.pageYOffset;
+        const parallax = scrolled * 0.5;
+        heroRef.current.style.transform = `translateY(${parallax}px)`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <div className="landing-page">
+      {/* Hero Section with Parallax */}
+      <section className="hero-section">
+        <div 
+          ref={heroRef}
+          className="hero-background" 
+          style={{ backgroundImage: 'url(/images/hero.gif)' }}
+        />
+        
+        <div className="hero-overlay"></div>
+        
+        <div className="hero-content text-center text-white">
+          <h1 className="display-4 mb-3">Welcome to HackLog</h1>
+          <TextType 
+            text={[
+              "Your daily dose of cyber insight.",
+              "Master the art of ethical hacking.",
+              "Stay ahead of security threats.",
+              "Learn, practice, and protect."
+            ]}
+            typingSpeed={75}
+            pauseDuration={1500}
+            showCursor={true}
+            cursorCharacter="|"
+            className="lead"
+            variableSpeed={undefined}
+            onSentenceComplete={undefined}
+          />
+        </div>
+      </section>
+
+      {/* Blog Section */}
+      <section className="blog-section">
+        <Container>
+          <Row>
+            <Col className="text-center">
+              <h2 className="display-3 mb-4">Here are some of our blogs</h2>
+              <p className="lead text-muted">Coming soon...</p>
+            </Col>
+          </Row>
+        </Container>
+      </section>
     </div>
-  </div>
+  );
 }

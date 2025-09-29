@@ -1,4 +1,4 @@
-import { Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 
 Admin.route = {
   path: '/admin',
@@ -7,10 +7,14 @@ Admin.route = {
 }
 
 export default function Admin() {
-  return <Row>
-    <Col>
-      <h2>Admin Panel</h2>
-      
-    </Col>
-  </Row>
+  return <div className="page-content">
+    <Container>
+      <Row>
+        <Col>
+          <h2>Admin Panel</h2>
+          
+        </Col>
+      </Row>
+    </Container>
+  </div>
 }

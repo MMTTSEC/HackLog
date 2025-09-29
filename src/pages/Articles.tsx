@@ -1,4 +1,4 @@
-import { Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 
 Articles.route = {
   path: '/articles',
@@ -7,10 +7,14 @@ Articles.route = {
 }
 
 export default function Articles() {
-  return <Row>
-    <Col>
-      <h2>Articles</h2>
-      <p>Browse our collection of hacking articles and tutorials.</p>
-    </Col>
-  </Row>
+  return <div className="page-content">
+    <Container>
+      <Row>
+        <Col>
+          <h2>Articles</h2>
+          <p>Browse our collection of hacking articles and tutorials.</p>
+        </Col>
+      </Row>
+    </Container>
+  </div>
 }
