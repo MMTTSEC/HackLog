@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { useEffect, useRef, useState } from 'react';
+import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import TextType from '../components/TextType';
 
 Start.route = {
@@ -7,8 +7,19 @@ Start.route = {
   index: 1
 }
 
+type Article = {
+  id: number;
+  title: string;
+  excerpt: string;
+  tags?: string[];
+  author?: string;
+  created?: string;
+};
+
 export default function Start() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,6 +32,38 @@ export default function Start() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      const res = await fetch('/api/articles?featured=1');
+      const data = await res.json();
+      const normalized = (Array.isArray(data) ? data : [])
+        .filter((x: any) => String(x.featured ?? '0') === '1')
+        .map((x: any) => {
+          const rawTags = x.tags ?? x.tagNames ?? [];
+          let tagNames: string[] = [];
+          if (Array.isArray(rawTags)) {
+            tagNames = rawTags
+              .map((t: any) => (typeof t === 'string' ? t : String(t?.name ?? '')))
+              .filter(Boolean);
+          } else if (typeof rawTags === 'string') {
+            tagNames = rawTags.split(',').map((s: string) => s.trim()).filter(Boolean);
+          }
+          const author = x.authorUsername ?? x.username ?? x.author_name ?? x.authorName ?? x.author ?? '';
+          return ({
+            id: Number(x.id),
+            title: String(x.title || ''),
+            excerpt: String(x.excerpt || ''),
+            tags: tagNames,
+            author: String(author || ''),
+            created: String(x.created || x.modified || '')
+          });
+        });
+      setArticles(normalized);
+    };
+
+    fetchArticles().finally(() => setLoading(false));
   }, []);
 
   return (
@@ -55,15 +98,65 @@ export default function Start() {
         </div>
       </section>
 
-      {/* Blog Section */}
+      {/* Featured Blog Section */}
       <section className="blog-section">
         <Container>
-          <Row>
-            <Col className="text-center">
-              <h2 className="display-3 mb-4">Here are some of our blogs</h2>
-              <p className="lead text-muted">Coming soon...</p>
+          <Row className="mb-4">
+            <Col md={10} lg={8}>
+              
+              <h2 className="display-5 mb-4">Here is our latest articles</h2>
+            
             </Col>
           </Row>
+
+          {loading ? (
+            <p className="text-muted">Loading featured articles...</p>
+          ) : articles.length === 0 ? (
+            <p className="text-muted">No featured articles available yet.</p>
+          ) : (
+            <Row className="gy-4 gy-lg-0">
+              {articles.map((a) => (
+                <Col key={a.id} xs={12} lg={6}>
+                  <article>
+                    <Card className="border-0 h-100">
+                      <Card.Body className="border bg-white p-4 d-flex flex-column">
+                        <div className="entry-header mb-3">
+                          <ul className="entry-meta list-unstyled d-flex mb-2 gap-2">
+                            {(a.tags || []).map((tag, i) => (
+                              <li key={i}>
+                                <Badge bg="primary">{tag}</Badge>
+                              </li>
+                            ))}
+                          </ul>
+                          <h2 className="card-title entry-title h4 mb-0">
+                            <a className="link-dark text-decoration-none" href={`/articles/${a.id}`}>{a.title}</a>
+                          </h2>
+                        </div>
+                        <p className="card-text entry-summary text-secondary mb-3">{a.excerpt}</p>
+                        <div className="mt-auto">
+                          <Button variant="primary" className="text-nowrap" href={`/articles/${a.id}`}>Read More</Button>
+                        </div>
+                      </Card.Body>
+                      <Card.Footer className="border border-top-0 bg-light p-4">
+                        <ul className="entry-meta list-unstyled d-flex align-items-center m-0">
+                          <li>
+                            <span className="fs-7 text-secondary">
+                              {a.created ? new Date(a.created).toLocaleDateString() : ''}
+                            </span>
+                          </li>
+                          <li>
+                          </li>
+                          <li>
+                            <span className="fs-7 text-secondary">{a.author || ''}</span>
+                          </li>
+                        </ul>
+                      </Card.Footer>
+                    </Card>
+                  </article>
+                </Col>
+              ))}
+            </Row>
+          )}
         </Container>
       </section>
     </div>
