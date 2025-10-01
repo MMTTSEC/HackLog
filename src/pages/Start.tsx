@@ -157,6 +157,14 @@ export default function Start() {
               ))}
             </Row>
           )}
+          
+          {!loading && articles.length > 0 && (
+            <Row className="mt-4">
+              <Col className="text-center">
+                <Button variant="primary" size="lg" href="/articles">All Blog Posts</Button>
+    </Col>
+  </Row>
+          )}
         </Container>
       </section>
     </div>
