@@ -121,7 +121,7 @@ export default function Start() {
           ) : articles.length === 0 ? (
             <p className="text-muted">No featured articles available yet.</p>
           ) : (
-            <Row className="gy-4 gy-lg-0">
+            <Row className="gy-5">
               {articles.map((a) => (
                 <Col key={a.id} xs={12} lg={6}>
                   <article className="custom-article-card h-100">
