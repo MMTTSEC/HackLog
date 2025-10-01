@@ -12,7 +12,6 @@ type Article = {
   title: string;
   excerpt: string;
   tags?: string[];
-  author?: string;
   created?: string;
 };
 
@@ -38,9 +37,16 @@ export default function Start() {
     const fetchArticles = async () => {
       const res = await fetch('/api/articles?featured=1');
       const data = await res.json();
+      
+      // Debug: Log the raw API response
+      console.log('Raw API response:', data);
+      
       const normalized = (Array.isArray(data) ? data : [])
         .filter((x: any) => String(x.featured ?? '0') === '1')
         .map((x: any) => {
+          // Debug: Log each article object
+          console.log('Processing article:', x);
+          
           const rawTags = x.tags ?? x.tagNames ?? [];
           let tagNames: string[] = [];
           if (Array.isArray(rawTags)) {
@@ -50,16 +56,28 @@ export default function Start() {
           } else if (typeof rawTags === 'string') {
             tagNames = rawTags.split(',').map((s: string) => s.trim()).filter(Boolean);
           }
-          const author = x.authorUsername ?? x.username ?? x.author_name ?? x.authorName ?? x.author ?? '';
-          return ({
+          
+          
+          
+          
+          
+          const processed = {
             id: Number(x.id),
             title: String(x.title || ''),
             excerpt: String(x.excerpt || ''),
             tags: tagNames,
-            author: String(author || ''),
             created: String(x.created || x.modified || '')
-          });
+          };
+          
+          // Debug: Log the processed article
+          console.log('Processed article:', processed);
+          
+          return processed;
         });
+      
+      // Debug: Log final normalized data
+      console.log('Final normalized articles:', normalized);
+      
       setArticles(normalized);
     };
 
@@ -117,41 +135,28 @@ export default function Start() {
             <Row className="gy-4 gy-lg-0">
               {articles.map((a) => (
                 <Col key={a.id} xs={12} lg={6}>
-                  <article>
-                    <Card className="border-0 h-100">
-                      <Card.Body className="border bg-white p-4 d-flex flex-column">
-                        <div className="entry-header mb-3">
-                          <ul className="entry-meta list-unstyled d-flex mb-2 gap-2">
-                            {(a.tags || []).map((tag, i) => (
-                              <li key={i}>
-                                <Badge bg="primary">{tag}</Badge>
-                              </li>
-                            ))}
-                          </ul>
-                          <h2 className="card-title entry-title h4 mb-0">
-                            <a className="link-dark text-decoration-none" href={`/articles/${a.id}`}>{a.title}</a>
-                          </h2>
-                        </div>
-                        <p className="card-text entry-summary text-secondary mb-3">{a.excerpt}</p>
-                        <div className="mt-auto">
-                          <Button variant="primary" className="text-nowrap" href={`/articles/${a.id}`}>Read More</Button>
-                        </div>
-                      </Card.Body>
-                      <Card.Footer className="border border-top-0 bg-light p-4">
-                        <ul className="entry-meta list-unstyled d-flex align-items-center m-0">
-                          <li>
-                            <span className="fs-7 text-secondary">
-                              {a.created ? new Date(a.created).toLocaleDateString() : ''}
-                            </span>
-                          </li>
-                          <li>
-                          </li>
-                          <li>
-                            <span className="fs-7 text-secondary">{a.author || ''}</span>
-                          </li>
-                        </ul>
-                      </Card.Footer>
-                    </Card>
+                  <article className="custom-article-card h-100">
+                    <div className="custom-article-header">
+                      <div className="custom-tags">
+                        {(a.tags || []).map((tag, i) => (
+                          <span key={i} className="custom-tag">{tag}</span>
+                        ))}
+                      </div>
+                      <h2 className="custom-title">
+                        <a href={`/articles/${a.id}`}>{a.title}</a>
+                      </h2>
+                    </div>
+                    <div className="custom-article-body">
+                      <p className="custom-excerpt">{a.excerpt}</p>
+                      <a href={`/articles/${a.id}`} className="custom-read-more">Read More</a>
+                    </div>
+                    <div className="custom-article-footer">
+                      <div className="custom-meta">
+                        <span className="custom-date">
+                          {a.created ? new Date(a.created).toLocaleDateString() : ''}
+                        </span>
+                      </div>
+                    </div>
                   </article>
                 </Col>
               ))}
@@ -161,7 +166,7 @@ export default function Start() {
           {!loading && articles.length > 0 && (
             <Row className="mt-4">
               <Col className="text-center">
-                <Button variant="primary" size="lg" href="/articles">All Blog Posts</Button>
+                <a href="/articles" className="custom-read-more">All Articles</a>
     </Col>
   </Row>
           )}
