@@ -6,6 +6,9 @@ import Start from './pages/Start.tsx';
 import Login from './pages/Login.tsx';
 import Articles from './pages/Articles.tsx';
 import Admin from './pages/Admin.tsx';
+import MyArticles from './pages/MyArticles.tsx';
+import AllUsers from './pages/AllUsers.tsx';
+import AdminAllArticles from './pages/AdminAllArticles.tsx';
 
 interface Route {
   element: JSX.Element;
@@ -21,7 +24,10 @@ export default [
   Start,
   Login,
   Articles,
-  Admin
+  Admin,
+  MyArticles,
+  AllUsers,
+  AdminAllArticles
 ]
   // map the route property of each page component to a Route
   .map(x => (({ element: createElement(x), ...x.route }) as Route))

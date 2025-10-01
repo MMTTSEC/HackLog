@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import routes from '../routes';
+import { NavDropdown } from 'react-bootstrap';
 
 export default function Header() {
 
@@ -38,15 +39,45 @@ export default function Header() {
         </div>
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="w-100 justify-content-center">
-            {routes.filter(x => x.menuLabel).map(
-              ({ menuLabel, path }, i) =>
+            {routes.filter(x => x.menuLabel && !x.parent).map(({ menuLabel, path }, i) => {
+              // Group admin children under a dropdown
+              if (path === '/admin') {
+                const adminChildren = routes.filter(r => r.parent === '/admin' && r.menuLabel);
+                const adminActive = isActive('/admin') || adminChildren.some(child => isActive(child.path));
+                return (
+                  <NavDropdown
+                    title={menuLabel}
+                    key={`admin-${i}`}
+                    className={adminActive ? 'active' : ''}
+                    onClick={() => setTimeout(() => setExpanded(false), 200)}
+                  >
+                    {adminChildren.map((child, j) => (
+                      <NavDropdown.Item
+                        as={Link}
+                        to={child.path}
+                        key={`admin-child-${j}`}
+                        className={isActive(child.path) ? 'active' : ''}
+                        onClick={() => setTimeout(() => setExpanded(false), 200)}
+                      >
+                        {child.menuLabel}
+                      </NavDropdown.Item>
+                    ))}
+                  </NavDropdown>
+                );
+              }
+              // Render regular top-level links
+              return (
                 <Nav.Link
-                  as={Link} key={i} to={path}
+                  as={Link}
+                  key={i}
+                  to={path}
                   className={isActive(path) ? 'active' : ''}
-                  /* close menu after selection*/
                   onClick={() => setTimeout(() => setExpanded(false), 200)}
-                >{menuLabel}</Nav.Link>
-            )}
+                >
+                  {menuLabel}
+                </Nav.Link>
+              );
+            })}
           </Nav>
         </Navbar.Collapse>
       </Container>
