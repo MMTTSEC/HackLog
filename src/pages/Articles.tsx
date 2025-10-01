@@ -17,7 +17,9 @@ type Article = {
 
 export default function Articles() {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -39,10 +41,27 @@ export default function Articles() {
         });
       
       setArticles(normalized);
+      setFilteredArticles(normalized);
     };
 
     fetchArticles().finally(() => setLoading(false));
   }, []);
+
+  // Filter articles based on search term
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredArticles(articles);
+    } else {
+      const filtered = articles.filter(article =>
+        article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        article.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (article.tags && article.tags.some(tag => 
+          tag.toLowerCase().includes(searchTerm.toLowerCase())
+        ))
+      );
+      setFilteredArticles(filtered);
+    }
+  }, [searchTerm, articles]);
 
   return (
     <div className="page-content">
@@ -54,13 +73,31 @@ export default function Articles() {
           </Col>
         </Row>
 
+        {/* Search Bar */}
+        <Row className="justify-content-center mb-4">
+          <Col md={6}>
+            <div className="search-container">
+              <input 
+                type="text" 
+                className="form-control search-input" 
+                placeholder="Search articles, tags, or content..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <i className="fas fa-search search-icon"></i>
+            </div>
+          </Col>
+        </Row>
+
         {loading ? (
           <p className="text-muted">Loading articles...</p>
-        ) : articles.length === 0 ? (
-          <p className="text-muted">No articles available yet.</p>
+        ) : filteredArticles.length === 0 ? (
+          <p className="text-muted">
+            {searchTerm ? `No articles found for "${searchTerm}"` : 'No articles available yet.'}
+          </p>
         ) : (
           <Row className="gy-4">
-            {articles.map((article) => (
+            {filteredArticles.map((article) => (
               <Col key={article.id} xs={12}>
                 <article className="horizontal-article-card">
                   <div className="horizontal-card-content">
