@@ -35,7 +35,7 @@ export default function Start() {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      const res = await fetch('/api/articles?featured=1');
+      const res = await fetch('/api/articles_with_tags?featured=1');
       const data = await res.json();
       
       // Debug: Log the raw API response
@@ -47,19 +47,8 @@ export default function Start() {
           // Debug: Log each article object
           console.log('Processing article:', x);
           
-          const rawTags = x.tags ?? x.tagNames ?? [];
-          let tagNames: string[] = [];
-          if (Array.isArray(rawTags)) {
-            tagNames = rawTags
-              .map((t: any) => (typeof t === 'string' ? t : String(t?.name ?? '')))
-              .filter(Boolean);
-          } else if (typeof rawTags === 'string') {
-            tagNames = rawTags.split(',').map((s: string) => s.trim()).filter(Boolean);
-          }
-          
-          
-          
-          
+          // Tags come as comma-separated string from the view
+          const tagNames = x.tags ? x.tags.split(',').map((s: string) => s.trim()).filter(Boolean) : [];
           
           const processed = {
             id: Number(x.id),
