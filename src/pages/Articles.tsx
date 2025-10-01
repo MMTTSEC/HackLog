@@ -20,6 +20,8 @@ export default function Articles() {
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTag, setSelectedTag] = useState('');
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -42,26 +44,48 @@ export default function Articles() {
       
       setArticles(normalized);
       setFilteredArticles(normalized);
+      
+      // Extract unique tags
+      const allTags = normalized.reduce((acc: string[], article) => {
+        if (article.tags) {
+          article.tags.forEach(tag => {
+            if (!acc.includes(tag)) {
+              acc.push(tag);
+            }
+          });
+        }
+        return acc;
+      }, []);
+      setAvailableTags(allTags.sort());
     };
 
     fetchArticles().finally(() => setLoading(false));
   }, []);
 
-  // Filter articles based on search term
+  // Filter articles based on search term and selected tag
   useEffect(() => {
-    if (!searchTerm.trim()) {
-      setFilteredArticles(articles);
-    } else {
-      const filtered = articles.filter(article =>
+    let filtered = articles;
+
+    // Filter by search term
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(article =>
         article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         article.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (article.tags && article.tags.some(tag => 
           tag.toLowerCase().includes(searchTerm.toLowerCase())
         ))
       );
-      setFilteredArticles(filtered);
     }
-  }, [searchTerm, articles]);
+
+    // Filter by selected tag
+    if (selectedTag) {
+      filtered = filtered.filter(article =>
+        article.tags && article.tags.includes(selectedTag)
+      );
+    }
+
+    setFilteredArticles(filtered);
+  }, [searchTerm, selectedTag, articles]);
 
   return (
     <div className="page-content">
@@ -89,43 +113,77 @@ export default function Articles() {
           </Col>
         </Row>
 
-        {loading ? (
-          <p className="text-muted">Loading articles...</p>
-        ) : filteredArticles.length === 0 ? (
-          <p className="text-muted">
-            {searchTerm ? `No articles found for "${searchTerm}"` : 'No articles available yet.'}
-          </p>
-        ) : (
-          <Row className="gy-4">
-            {filteredArticles.map((article) => (
-              <Col key={article.id} xs={12}>
-                <article className="horizontal-article-card">
-                  <div className="horizontal-card-content">
-                    <div className="horizontal-card-header">
-                      <div className="horizontal-tags">
-                        {(article.tags || []).map((tag, i) => (
-                          <span key={i} className="horizontal-tag">{tag}</span>
-                        ))}
+        {/* Main Content with Sidebar */}
+        <Row>
+          {/* Sidebar Filter */}
+          <Col lg={3} className="mb-4">
+            <div className="filter-sidebar">
+              <h5 className="filter-title">Filter by Tag</h5>
+              <select 
+                className="form-select tag-filter"
+                value={selectedTag}
+                onChange={(e) => setSelectedTag(e.target.value)}
+              >
+                <option value="">All Tags</option>
+                {availableTags.map((tag) => (
+                  <option key={tag} value={tag}>{tag}</option>
+                ))}
+              </select>
+              {selectedTag && (
+                <button 
+                  className="btn btn-sm btn-outline-secondary mt-2"
+                  onClick={() => setSelectedTag('')}
+                >
+                  Clear Filter
+                </button>
+              )}
+            </div>
+          </Col>
+
+          {/* Articles List */}
+          <Col lg={9}>
+            {loading ? (
+              <p className="text-muted">Loading articles...</p>
+            ) : filteredArticles.length === 0 ? (
+              <p className="text-muted">
+                {searchTerm || selectedTag ? 
+                  `No articles found${searchTerm ? ` for "${searchTerm}"` : ''}${selectedTag ? ` with tag "${selectedTag}"` : ''}` : 
+                  'No articles available yet.'
+                }
+              </p>
+            ) : (
+              <Row className="gy-4">
+                {filteredArticles.map((article) => (
+                  <Col key={article.id} xs={12}>
+                    <article className="horizontal-article-card">
+                      <div className="horizontal-card-content">
+                        <div className="horizontal-card-header">
+                          <div className="horizontal-tags">
+                            {(article.tags || []).map((tag, i) => (
+                              <span key={i} className="horizontal-tag">{tag}</span>
+                            ))}
+                          </div>
+                          <h3 className="horizontal-title">
+                            <a href={`/articles/${article.id}`}>{article.title}</a>
+                          </h3>
+                        </div>
+                        <div className="horizontal-card-body">
+                          <p className="horizontal-excerpt">{article.excerpt}</p>
+                          <div className="horizontal-card-footer">
+                            <span className="horizontal-date">
+                              {article.created ? new Date(article.created).toLocaleDateString() : ''}
+                            </span>
+                            <a href={`/articles/${article.id}`} className="horizontal-read-more">Read More</a>
+                          </div>
+                        </div>
                       </div>
-                      <h3 className="horizontal-title">
-                        <a href={`/articles/${article.id}`}>{article.title}</a>
-                      </h3>
-                    </div>
-                    <div className="horizontal-card-body">
-                      <p className="horizontal-excerpt">{article.excerpt}</p>
-                      <div className="horizontal-card-footer">
-                        <span className="horizontal-date">
-                          {article.created ? new Date(article.created).toLocaleDateString() : ''}
-                        </span>
-                        <a href={`/articles/${article.id}`} className="horizontal-read-more">Read More</a>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              </Col>
-            ))}
-          </Row>
-        )}
+                    </article>
+                  </Col>
+                ))}
+              </Row>
+            )}
+          </Col>
+        </Row>
       </Container>
     </div>
   );
