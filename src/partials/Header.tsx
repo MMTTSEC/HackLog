@@ -47,15 +47,16 @@ export default function Header() {
         </div>
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="w-100 justify-content-center">
-            {routes.filter(x => x.menuLabel && !x.parent).map(({ menuLabel, path }, i) => {
-              // Group admin children under a dropdown
-              if (path === '/admin') {
+            {/* Admin dropdown  */}
+            {user?.role === 'admin' && (
+              (() => {
                 const adminChildren = routes.filter(r => r.parent === '/admin' && r.menuLabel);
-                const adminActive = isActive('/admin') || adminChildren.some(child => isActive(child.path));
+                if (adminChildren.length === 0) return null;
+                const adminActive = adminChildren.some(child => isActive(child.path));
                 return (
                   <NavDropdown
-                    title={menuLabel}
-                    key={`admin-${i}`}
+                    title="Admin"
+                    key="admin-dropdown"
                     className={adminActive ? 'active' : ''}
                     onClick={() => setTimeout(() => setExpanded(false), 200)}
                   >
@@ -72,10 +73,18 @@ export default function Header() {
                     ))}
                   </NavDropdown>
                 );
-              }
+              })()
+            )}
+
+            {routes
+              .filter(x => x.menuLabel && !x.parent)
+              .filter(r => {
+                if (r.path === '/my-articles') return !!user;
+                if (r.path === '/register') return !user;
+                return true;
+              })
+              .map(({ menuLabel, path }, i) => {
               // Render regular top-level links
-              // Hide Register when logged in
-              if (path === '/register' && user) { return null; }
               const label = path === '/login' ? (user ? 'Log out' : menuLabel) : menuLabel;
               const handleClick = async (e: any) => {
                 if (path === '/login' && user) {
