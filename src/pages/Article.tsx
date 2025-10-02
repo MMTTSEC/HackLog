@@ -12,6 +12,7 @@ type ArticleType = {
   content: string;
   created: string;
   modified: string;
+  authorUsername?: string;
 };
 
 export default function Article() {
@@ -28,7 +29,7 @@ export default function Article() {
     const fetchArticle = async () => {
       if (!articleId) { setError('Missing article id.'); setLoading(false); return; }
       try {
-        const res = await fetch(`/api/articles/${articleId}`);
+        const res = await fetch(`/api/article_details/${articleId}`);
         const data = await res.json();
         if (data && !data.error) {
           setArticle({
@@ -36,7 +37,8 @@ export default function Article() {
             title: String(data.title || ''),
             content: String(data.content || ''),
             created: String(data.created || ''),
-            modified: String(data.modified || '')
+            modified: String(data.modified || ''),
+            authorUsername: data.authorUsername ? String(data.authorUsername) : undefined
           });
         } else {
           setError(String(data?.error || 'Not found'));
@@ -59,7 +61,10 @@ export default function Article() {
             {error && !loading && <p className="text-danger">{error}</p>}
             {!loading && !error && article && (
               <article>
-                <h1 style={{ fontWeight: 800 }} className="mb-3">{article.title}</h1>
+                <h1 style={{ fontWeight: 800 }} className="mb-1">{article.title}</h1>
+                {article.authorUsername && (
+                  <div className="text-secondary mb-1">By {article.authorUsername}</div>
+                )}
                 <div className="mb-3 text-secondary">
                   <span>Created: {article.created ? new Date(article.created).toLocaleString() : ''}</span>
                   <span className="ms-3">Last modified: {article.modified ? new Date(article.modified).toLocaleString() : ''}</span>
