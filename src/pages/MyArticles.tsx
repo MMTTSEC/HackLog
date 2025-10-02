@@ -58,6 +58,12 @@ export default function MyArticles() {
           </Col>
         </Row>
 
+        <Row className="mb-3">
+          <Col className="text-end">
+            <button className="btn btn-success">Add Article</button>
+          </Col>
+        </Row>
+
         {loading ? (
           <p className="text-muted">Loading your articles...</p>
         ) : articles.length === 0 ? (
