@@ -39,11 +39,11 @@ export default function Login() {
   };
 
   return (
-    <div className="page-content">
+    <div className="page-content auth-page">
       <Container>
         <Row className="justify-content-center">
           <Col md={6} lg={5}>
-            <h2 className="mb-3">Log in</h2>
+            <h2 className="mb-3 text-center">Log in</h2>
             <form onSubmit={onSubmit} className="auth-form">
               {error && <div className="alert alert-danger py-2">{error}</div>}
               <div className="mb-3">
@@ -54,7 +54,7 @@ export default function Login() {
                 <label className="form-label">Password</label>
                 <input className="form-control" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
               </div>
-              <button className="btn btn-success w-100" disabled={loading}>
+              <button className="btn btn-success w-100 auth-submit" disabled={loading}>
                 {loading ? 'Signing in...' : 'Sign in'}
               </button>
               <div className="text-center mt-3">
