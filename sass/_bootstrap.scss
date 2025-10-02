@@ -293,6 +293,23 @@ html, body {
     color: #718096;
     font-size: 0.875rem;
   }
+
+  .likes-and-cta {
+    display: flex;
+    align-items: center;
+  }
+
+  .likes-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(0, 255, 0, 0.12);
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+  }
 }
 
 .horizontal-read-more {

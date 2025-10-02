@@ -22,6 +22,7 @@ export default function Articles() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
   const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [likesByArticleId, setLikesByArticleId] = useState<Record<number, number>>({});
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -48,7 +49,7 @@ export default function Articles() {
       // Extract unique tags
       const allTags = normalized.reduce((acc: string[], article) => {
         if (article.tags) {
-          article.tags.forEach(tag => {
+          article.tags.forEach((tag: string) => {
             if (!acc.includes(tag)) {
               acc.push(tag);
             }
@@ -57,6 +58,23 @@ export default function Articles() {
         return acc;
       }, []);
       setAvailableTags(allTags.sort());
+
+      // Fetch likes and compute counts per article
+      try {
+        const likesRes = await fetch('/api/article_likes');
+        const likesData = await likesRes.json();
+        const counts: Record<number, number> = {};
+        if (Array.isArray(likesData)) {
+          for (const l of likesData) {
+            const aId = Number(l.articleId);
+            const c = l.likeCount != null ? Number(l.likeCount) : 1;
+            counts[aId] = (counts[aId] || 0) + c;
+          }
+        }
+        setLikesByArticleId(counts);
+      } catch (_) {
+        setLikesByArticleId({});
+      }
     };
 
     fetchArticles().finally(() => setLoading(false));
@@ -173,7 +191,13 @@ export default function Articles() {
                             <span className="horizontal-date">
                               {article.created ? new Date(article.created).toLocaleDateString() : ''}
                             </span>
-                            <a href={`/articles/${article.id}`} className="horizontal-read-more">Read More</a>
+                            <div className="likes-and-cta">
+                              <span className="likes-pill">
+                                <span className="material-symbols-outlined me-1 align-middle">thumb_up</span>
+                                <span className="align-middle">{likesByArticleId[article.id] ?? 0}</span>
+                              </span>
+                              <a href={`/articles/${article.id}`} className="horizontal-read-more ms-2">Read More</a>
+                            </div>
                           </div>
                         </div>
                       </div>
