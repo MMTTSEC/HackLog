@@ -530,3 +530,45 @@ html, body {
     text-decoration: underline;
   }
 }
+
+// Create Article - Tag selector styles
+.tag-select {
+  background-color: #1a202c;
+  border: 2px solid #4a5568;
+  color: #ffffff;
+}
+.tag-select:focus {
+  background-color: #1a202c;
+  border-color: #00ff00;
+  color: #ffffff;
+  box-shadow: 0 0 0 0.2rem rgba(0,255,0,0.2);
+}
+.tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+}
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(0, 255, 0, 0.1);
+  color: #9ef7b1;
+  border: 1px solid rgba(0, 255, 0, 0.35);
+  border-radius: 999px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+}
+.tag-chip-label {
+  margin-right: 0.35rem;
+}
+.tag-chip-remove {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: #9ef7b1;
+  cursor: pointer;
+  padding: 0 0 0 0.15rem;
+  line-height: 1;
+}
+.tag-chip-remove:hover {
+  color: #ff6b6b;
+}

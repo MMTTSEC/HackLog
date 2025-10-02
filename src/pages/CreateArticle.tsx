@@ -4,11 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import ProtectedRoute from '../utils/ProtectedRoute';
 import { useAuth } from '../utils/useAuth';
 
-CreateArticle.route = {
-  path: '/my-articles/new',
-  index: 8
-}
-
 export default function CreateArticle() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -101,23 +96,38 @@ export default function CreateArticle() {
                 </div>
                 <div className="mb-4">
                   <label className="form-label">Tags</label>
-                  <select 
-                    className="form-select" 
-                    multiple 
-                    value={selectedTagIds.map(String)} 
-                    onChange={e => {
-                      const values = Array.from(e.target.selectedOptions, option => Number(option.value));
-                      setSelectedTagIds(values);
+                  <select
+                    className="form-select tag-select"
+                    aria-label="Select tags to add"
+                    value=""
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      if (value && !selectedTagIds.includes(value)) {
+                        setSelectedTagIds([...selectedTagIds, value]);
+                      }
                     }}
-                    size={Math.min(availableTags.length, 6)}
                   >
+                    <option value="" disabled>Select tags…</option>
                     {availableTags.map(tag => (
-                      <option key={tag.id} value={tag.id}>
-                        {tag.name}
-                      </option>
+                      <option key={tag.id} value={tag.id}>{tag.name}</option>
                     ))}
                   </select>
-                  <small className="form-text text-muted">Hold Ctrl/Cmd to select multiple tags</small>
+                  <div className="tag-chips mt-2">
+                    {selectedTagIds.map(id => {
+                      const tag = availableTags.find(t => t.id === id);
+                      if (!tag) return null;
+                      return (
+                        <span key={id} className="tag-chip me-2 mb-2">
+                          <span className="tag-chip-label">{tag.name}</span>
+                          <button type="button" className="tag-chip-remove" aria-label={`Remove ${tag.name}`}
+                            onClick={() => setSelectedTagIds(selectedTagIds.filter(tid => tid !== id))}
+                          >
+                            ✕
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
                 <button className="btn btn-success w-100 auth-submit" disabled={saving}>
                   {saving ? 'Creating...' : 'Create Article'}
@@ -130,5 +140,12 @@ export default function CreateArticle() {
     </ProtectedRoute>
   );
 }
+
+// Route meta
+// @ts-ignore augment function value with route config
+(CreateArticle as any).route = {
+  path: '/my-articles/new',
+  index: 8
+};
 
 
