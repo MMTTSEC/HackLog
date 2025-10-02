@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../utils/useAuth';
 
 Articles.route = {
   path: '/articles',
@@ -16,6 +18,8 @@ type Article = {
 };
 
 export default function Articles() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [articles, setArticles] = useState<Article[]>([]);
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +27,7 @@ export default function Articles() {
   const [selectedTag, setSelectedTag] = useState('');
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [likesByArticleId, setLikesByArticleId] = useState<Record<number, number>>({});
+  const [likingIds, setLikingIds] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -104,6 +109,29 @@ export default function Articles() {
 
     setFilteredArticles(filtered);
   }, [searchTerm, selectedTag, articles]);
+
+  const handleLike = async (articleId: number) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    if (likingIds[articleId]) return;
+    setLikingIds(prev => ({ ...prev, [articleId]: true }));
+    try {
+      const res = await fetch('/api/likes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ articleId, userId: user.id })
+      });
+      if (res.ok) {
+        setLikesByArticleId(prev => ({ ...prev, [articleId]: (prev[articleId] ?? 0) + 1 }));
+      } else {
+      }
+    } catch (_) {
+    } finally {
+      setLikingIds(prev => ({ ...prev, [articleId]: false }));
+    }
+  };
 
   return (
     <div className="page-content">
@@ -192,10 +220,17 @@ export default function Articles() {
                               {article.created ? new Date(article.created).toLocaleDateString() : ''}
                             </span>
                             <div className="likes-and-cta">
-                              <span className="likes-pill">
+                              <button 
+                                type="button"
+                                className="likes-pill"
+                                title={user ? 'Like' : 'Login to like'}
+                                onClick={() => handleLike(article.id)}
+                                disabled={!!likingIds[article.id]}
+                                style={{ cursor: 'pointer' }}
+                              >
                                 <span className="material-symbols-outlined me-1 align-middle">thumb_up</span>
                                 <span className="align-middle">{likesByArticleId[article.id] ?? 0}</span>
-                              </span>
+                              </button>
                               <a href={`/articles/${article.id}`} className="horizontal-read-more ms-2">Read More</a>
                             </div>
                           </div>
