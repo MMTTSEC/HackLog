@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '../utils/useAuth';
 
 Register.route = {
   path: '/register',
@@ -10,11 +12,15 @@ Register.route = {
 
 export default function Register() {
   const navigate = useNavigate();
+  const { user, refresh } = useAuth();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => { refresh(); }, []);
+  useEffect(() => { if (user) navigate('/'); }, [user]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

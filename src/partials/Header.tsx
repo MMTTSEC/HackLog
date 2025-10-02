@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import routes from '../routes';
 import { NavDropdown } from 'react-bootstrap';
+import { useAuth } from '../utils/useAuth';
 
 export default function Header() {
 
@@ -18,6 +19,10 @@ export default function Header() {
   // function that returns true if a menu item is 'active'
   const isActive = (path: string) =>
     path === currentRoute?.path || path === currentRoute?.parent;
+
+  const { user, refresh } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => { refresh(); }, []);
 
   return <header>
     <Navbar
@@ -66,15 +71,29 @@ export default function Header() {
                 );
               }
               // Render regular top-level links
+              // Hide Register when logged in
+              if (path === '/register' && user) { return null; }
+              const label = path === '/login' ? (user ? 'Log out' : menuLabel) : menuLabel;
+              const handleClick = async (e: any) => {
+                if (path === '/login' && user) {
+                  e.preventDefault();
+                  try { await fetch('/api/login', { method: 'DELETE' }); } catch (_) {}
+                  await refresh();
+                  setTimeout(() => setExpanded(false), 200);
+                  navigate('/');
+                  return;
+                }
+                setTimeout(() => setExpanded(false), 200);
+              };
               return (
                 <Nav.Link
                   as={Link}
                   key={i}
                   to={path}
                   className={isActive(path) ? 'active' : ''}
-                  onClick={() => setTimeout(() => setExpanded(false), 200)}
+                  onClick={handleClick}
                 >
-                  {menuLabel}
+                  {label}
                 </Nav.Link>
               );
             })}

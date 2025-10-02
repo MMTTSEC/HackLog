@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '../utils/useAuth';
 
 Login.route = {
   path: '/login',
@@ -10,10 +12,18 @@ Login.route = {
 
 export default function Login() {
   const navigate = useNavigate();
+  const { user, refresh } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    refresh();
+  }, []);
+  useEffect(() => {
+    if (user) navigate('/');
+  }, [user]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +37,7 @@ export default function Login() {
       });
       const data = await res.json();
       if (data && !data.error) {
+        await refresh();
         navigate('/');
       } else {
         setError(String(data?.error || 'Login failed'));
