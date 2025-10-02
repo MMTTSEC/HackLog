@@ -13,6 +13,7 @@ export default function MyArticles() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState<any[]>([]);
+  const [likesById, setLikesById] = useState<Record<number, number>>({});
 
   useEffect(() => {
     const load = async () => {
@@ -20,7 +21,25 @@ export default function MyArticles() {
       try {
         const res = await fetch(`/api/articles?where=authorId=${encodeURIComponent(String(user.id))}`);
         const data = await res.json();
-        setArticles(Array.isArray(data) ? data : []);
+        const list = Array.isArray(data) ? data : [];
+        setArticles(list);
+
+        // Fetch like counts for these articles
+        try {
+          const likesRes = await fetch('/api/article_likes');
+          const likesData = await likesRes.json();
+          const map: Record<number, number> = {};
+          if (Array.isArray(likesData)) {
+            for (const row of likesData) {
+              const aId = Number(row.articleId);
+              const c = row.likeCount != null ? Number(row.likeCount) : 0;
+              map[aId] = c;
+            }
+          }
+          setLikesById(map);
+        } catch (_) {
+          setLikesById({});
+        }
       } catch (_) {
         setArticles([]);
       } finally {
@@ -52,6 +71,7 @@ export default function MyArticles() {
                 <th style={{width:'180px'}}>Created</th>
                 <th style={{width:'180px'}}>Modified</th>
                 <th style={{width:'110px'}}>Featured</th>
+                <th style={{width:'90px'}}>Likes</th>
                 <th style={{width:'120px'}}>Actions</th>
               </tr>
             </thead>
@@ -63,6 +83,7 @@ export default function MyArticles() {
                   <td>{a.created ? new Date(a.created).toLocaleString() : ''}</td>
                   <td>{a.modified ? new Date(a.modified).toLocaleString() : ''}</td>
                   <td>{String(a.featured ?? 0) === '1' ? 'Yes' : 'No'}</td>
+                  <td>{likesById[a.id] ?? 0}</td>
                   <td>
                     <a href="#" className="btn btn-sm btn-outline-light">Edit</a>
                   </td>
