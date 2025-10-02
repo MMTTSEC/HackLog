@@ -506,3 +506,27 @@ html, body {
     font-weight: 600;
   }
 }
+
+// My Articles styling
+.my-articles-toolbar {
+  .my-articles-add {
+    border: 2px solid #00ff00;
+    background: transparent;
+    color: #00ff00;
+    font-weight: 700;
+  }
+  .my-articles-add:hover {
+    background: #00ff00;
+    color: #000;
+  }
+}
+
+.my-articles-table {
+  .my-article-link {
+    color: #00ff00;
+    text-decoration: none;
+  }
+  .my-article-link:hover {
+    text-decoration: underline;
+  }
+}

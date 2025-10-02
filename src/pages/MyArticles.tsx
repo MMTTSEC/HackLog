@@ -52,15 +52,12 @@ export default function MyArticles() {
   return <ProtectedRoute roles={['user']}>
     <div className="page-content">
       <Container>
-        <Row className="mb-3">
+        <Row className="mb-5 align-items-center my-articles-toolbar">
           <Col>
-            <h2>My Articles</h2>
+            <h2 className="mb-0">My Articles</h2>
           </Col>
-        </Row>
-
-        <Row className="mb-3">
           <Col className="text-end">
-            <button className="btn btn-success">Add Article</button>
+            <button className="btn btn-success my-articles-add">Add Article</button>
           </Col>
         </Row>
 
@@ -69,7 +66,7 @@ export default function MyArticles() {
         ) : articles.length === 0 ? (
           <p className="text-muted">You have not created any articles yet.</p>
         ) : (
-          <Table striped bordered hover responsive variant="dark">
+          <Table striped bordered hover responsive variant="dark" className="my-articles-table">
             <thead>
               <tr>
                 <th style={{width:'80px'}}>ID</th>
@@ -85,13 +82,15 @@ export default function MyArticles() {
               {articles.map((a: any) => (
                 <tr key={a.id}>
                   <td>{a.id}</td>
-                  <td><a href={`/articles/${a.id}`}>{a.title}</a></td>
+                  <td><a className="my-article-link" href={`/articles/${a.id}`}>{a.title}</a></td>
                   <td>{a.created ? new Date(a.created).toLocaleString() : ''}</td>
                   <td>{a.modified ? new Date(a.modified).toLocaleString() : ''}</td>
-                  <td>{String(a.featured ?? 0) === '1' ? 'Yes' : 'No'}</td>
+                  <td>
+                    {String(a.featured ?? 0) === '1' ? <span className="badge bg-success">Yes</span> : <span className="badge bg-secondary">No</span>}
+                  </td>
                   <td>{likesById[a.id] ?? 0}</td>
                   <td>
-                    <a href="#" className="btn btn-sm btn-outline-light">Edit</a>
+                    <a href="#" className="btn btn-sm btn-outline-success">Edit</a>
                   </td>
                 </tr>
               ))}
