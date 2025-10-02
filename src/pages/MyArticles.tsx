@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col, Table } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import ProtectedRoute from '../utils/ProtectedRoute';
 import { useAuth } from '../utils/useAuth';
 
@@ -90,7 +91,13 @@ export default function MyArticles() {
                   </td>
                   <td>{likesById[a.id] ?? 0}</td>
                   <td>
-                    <a href="#" className="btn btn-sm btn-outline-success">Edit</a>
+                    <Link 
+                      to={`/my-articles/edit/${a.id}`} 
+                      className="btn btn-sm btn-outline-success"
+                      state={{ article: a }}
+                    >
+                      Edit
+                    </Link>
                   </td>
                 </tr>
               ))}
