@@ -17,13 +17,13 @@ type ArticleType = {
 
 export default function Article() {
   const params = useParams();
-  // When using a wildcard route (/articles/*), the matched remainder is stored under key "*"
   const wildcard = params['*'] || '';
   const articleId = (wildcard.split('/')[0] || '').trim();
 
   const [article, setArticle] = useState<ArticleType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [likesCount, setLikesCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -43,6 +43,16 @@ export default function Article() {
         } else {
           setError(String(data?.error || 'Not found'));
         }
+        // Fetch like count for this article
+        try {
+          const likesRes = await fetch(`/api/article_likes?where=articleId=${encodeURIComponent(articleId)}`);
+          const likesData = await likesRes.json();
+          if (Array.isArray(likesData) && likesData.length > 0) {
+            setLikesCount(Number(likesData[0].likeCount || 0));
+          } else {
+            setLikesCount(0);
+          }
+        } catch (_) { setLikesCount(0); }
       } catch (e: any) {
         setError('Failed to load article.');
       } finally {
@@ -55,22 +65,27 @@ export default function Article() {
   return (
     <div className="page-content">
       <Container>
-        <Row className="mb-4">
-          <Col>
+        <Row className="justify-content-center">
+          <Col lg={10} xl={8}>
             {loading && <p className="text-muted">Loading article...</p>}
             {error && !loading && <p className="text-danger">{error}</p>}
             {!loading && !error && article && (
-              <article>
-                <h1 style={{ fontWeight: 800 }} className="mb-1">{article.title}</h1>
+              <article className="article-detail">
+                <h1 className="article-title display-4 fw-bold mb-2">{article.title}</h1>
                 {article.authorUsername && (
-                  <div className="text-secondary mb-1">By {article.authorUsername}</div>
+                  <div className="article-author mb-2">By {article.authorUsername}</div>
                 )}
-                <div className="mb-3 text-secondary">
-                  <span>Created: {article.created ? new Date(article.created).toLocaleString() : ''}</span>
-                  <span className="ms-3">Last modified: {article.modified ? new Date(article.modified).toLocaleString() : ''}</span>
-                </div>
-                <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+                <hr className="article-divider" />
+                <div className="article-content mb-4" style={{ whiteSpace: 'pre-wrap' }}>
                   {article.content}
+                </div>
+                <div className="article-info d-flex align-items-center gap-3">
+                  <span className="article-likes d-inline-flex align-items-center">
+                    <span className="material-symbols-outlined me-1">thumb_up</span>
+                    {likesCount}
+                  </span>
+                  <span>Created: {article.created ? new Date(article.created).toLocaleString() : ''}</span>
+                  <span>Updated: {article.modified ? new Date(article.modified).toLocaleString() : ''}</span>
                 </div>
               </article>
             )}
