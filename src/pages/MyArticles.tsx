@@ -52,6 +52,7 @@ export default function MyArticles() {
                 <th style={{width:'180px'}}>Created</th>
                 <th style={{width:'180px'}}>Modified</th>
                 <th style={{width:'110px'}}>Featured</th>
+                <th style={{width:'120px'}}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -62,6 +63,9 @@ export default function MyArticles() {
                   <td>{a.created ? new Date(a.created).toLocaleString() : ''}</td>
                   <td>{a.modified ? new Date(a.modified).toLocaleString() : ''}</td>
                   <td>{String(a.featured ?? 0) === '1' ? 'Yes' : 'No'}</td>
+                  <td>
+                    <a href="#" className="btn btn-sm btn-outline-light">Edit</a>
+                  </td>
                 </tr>
               ))}
             </tbody>
