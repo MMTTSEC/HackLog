@@ -1,4 +1,5 @@
 import { Container, Row, Col } from 'react-bootstrap';
+import ProtectedRoute from '../utils/ProtectedRoute';
 
 AllUsers.route = {
   path: '/admin/users',
@@ -8,14 +9,16 @@ AllUsers.route = {
 }
 
 export default function AllUsers() {
-  return <div className="page-content">
-    <Container>
-      <Row>
-        <Col>
-          <h2>All Users</h2>
-          <p>Coming soon...</p>
-        </Col>
-      </Row>
-    </Container>
-  </div>
+  return <ProtectedRoute roles={['admin']}>
+    <div className="page-content">
+      <Container>
+        <Row>
+          <Col>
+            <h2>All Users</h2>
+            <p>Coming soon...</p>
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  </ProtectedRoute>
 }

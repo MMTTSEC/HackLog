@@ -5,7 +5,6 @@ import NotFoundPage from './pages/NotFoundPage.tsx';
 import Start from './pages/Start.tsx';
 import Login from './pages/Login.tsx';
 import Articles from './pages/Articles.tsx';
-import Admin from './pages/Admin.tsx';
 import MyArticles from './pages/MyArticles.tsx';
 import AllUsers from './pages/AllUsers.tsx';
 import AdminAllArticles from './pages/AdminAllArticles.tsx';
@@ -28,7 +27,6 @@ export default [
   Articles,
   Article,
   Register,
-  Admin,
   MyArticles,
   AllUsers,
   AdminAllArticles
