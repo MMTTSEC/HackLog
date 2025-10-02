@@ -47,68 +47,86 @@ export default function Header() {
         </div>
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="w-100 justify-content-center">
-            {/* Admin dropdown  */}
-            {user?.role === 'admin' && (
-              (() => {
-                const adminChildren = routes.filter(r => r.parent === '/admin' && r.menuLabel);
-                if (adminChildren.length === 0) return null;
-                const adminActive = adminChildren.some(child => isActive(child.path));
-                return (
-                  <NavDropdown
-                    title="Admin"
-                    key="admin-dropdown"
-                    className={adminActive ? 'active' : ''}
-                    onClick={() => setTimeout(() => setExpanded(false), 200)}
-                  >
-                    {adminChildren.map((child, j) => (
-                      <NavDropdown.Item
-                        as={Link}
-                        to={child.path}
-                        key={`admin-child-${j}`}
-                        className={isActive(child.path) ? 'active' : ''}
-                        onClick={() => setTimeout(() => setExpanded(false), 200)}
-                      >
-                        {child.menuLabel}
-                      </NavDropdown.Item>
-                    ))}
-                  </NavDropdown>
-                );
-              })()
+            {/* Articles */}
+            <Nav.Link
+              as={Link}
+              to="/articles"
+              className={isActive('/articles') ? 'active' : ''}
+              onClick={() => setTimeout(() => setExpanded(false), 200)}
+            >
+              Articles
+            </Nav.Link>
+
+            {/* My Articles (only when logged in) */}
+            {user && (
+              <Nav.Link
+                as={Link}
+                to="/my-articles"
+                className={isActive('/my-articles') ? 'active' : ''}
+                onClick={() => setTimeout(() => setExpanded(false), 200)}
+              >
+                My Articles
+              </Nav.Link>
             )}
 
-            {routes
-              .filter(x => x.menuLabel && !x.parent)
-              .filter(r => {
-                if (r.path === '/my-articles') return !!user;
-                if (r.path === '/register') return !user;
-                return true;
-              })
-              .map(({ menuLabel, path }, i) => {
-              // Render regular top-level links
-              const label = path === '/login' ? (user ? 'Log out' : menuLabel) : menuLabel;
-              const handleClick = async (e: any) => {
-                if (path === '/login' && user) {
+            {/* Admin dropdown (only for admins) */}
+            {user?.role === 'admin' && (() => {
+              const adminChildren = routes.filter(r => r.parent === '/admin' && r.menuLabel);
+              if (adminChildren.length === 0) return null;
+              const adminActive = adminChildren.some(child => isActive(child.path));
+              return (
+                <NavDropdown
+                  title="Admin"
+                  key="admin-dropdown"
+                  className={adminActive ? 'active' : ''}
+                  onClick={() => setTimeout(() => setExpanded(false), 200)}
+                >
+                  {adminChildren.map((child, j) => (
+                    <NavDropdown.Item
+                      as={Link}
+                      to={child.path}
+                      key={`admin-child-${j}`}
+                      className={isActive(child.path) ? 'active' : ''}
+                      onClick={() => setTimeout(() => setExpanded(false), 200)}
+                    >
+                      {child.menuLabel}
+                    </NavDropdown.Item>
+                  ))}
+                </NavDropdown>
+              );
+            })()}
+
+            {/* Login / Logout */}
+            <Nav.Link
+              as={Link}
+              to="/login"
+              className={isActive('/login') ? 'active' : ''}
+              onClick={async (e: any) => {
+                if (user) {
                   e.preventDefault();
-                  try { await fetch('/api/login', { method: 'DELETE' }); } catch (_) {}
+                  try { await fetch('/api/login', { method: 'DELETE' }); } catch(_) {}
                   await refresh();
                   setTimeout(() => setExpanded(false), 200);
                   navigate('/');
                   return;
                 }
                 setTimeout(() => setExpanded(false), 200);
-              };
-              return (
-                <Nav.Link
-                  as={Link}
-                  key={i}
-                  to={path}
-                  className={isActive(path) ? 'active' : ''}
-                  onClick={handleClick}
-                >
-                  {label}
-                </Nav.Link>
-              );
-            })}
+              }}
+            >
+              {user ? 'Log out' : 'Login'}
+            </Nav.Link>
+
+            {/* Register (only when logged out) */}
+            {!user && (
+              <Nav.Link
+                as={Link}
+                to="/register"
+                className={isActive('/register') ? 'active' : ''}
+                onClick={() => setTimeout(() => setExpanded(false), 200)}
+              >
+                Register
+              </Nav.Link>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>
