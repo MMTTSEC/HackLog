@@ -57,7 +57,7 @@ export default function MyArticles() {
             <h2 className="mb-0">My Articles</h2>
           </Col>
           <Col className="text-end">
-            <button className="btn btn-success my-articles-add">Add Article</button>
+            <a href="/my-articles/new" className="btn btn-success my-articles-add">Add Article</a>
           </Col>
         </Row>
 

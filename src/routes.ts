@@ -8,6 +8,7 @@ import Articles from './pages/Articles.tsx';
 import MyArticles from './pages/MyArticles.tsx';
 import AllUsers from './pages/AllUsers.tsx';
 import AdminAllArticles from './pages/AdminAllArticles.tsx';
+import CreateArticle from './pages/CreateArticle.tsx';
 import Article from './pages/Article.tsx';
 import Register from './pages/Register.tsx';
 
@@ -28,6 +29,7 @@ export default [
   Article,
   Register,
   MyArticles,
+  CreateArticle,
   AllUsers,
   AdminAllArticles
 ]
