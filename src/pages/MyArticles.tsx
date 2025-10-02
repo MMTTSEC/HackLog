@@ -15,6 +15,7 @@ export default function MyArticles() {
   const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState<any[]>([]);
   const [likesById, setLikesById] = useState<Record<number, number>>({});
+  const [deletingIds, setDeletingIds] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     const load = async () => {
@@ -49,6 +50,27 @@ export default function MyArticles() {
     };
     load();
   }, [user]);
+
+  const handleDelete = async (id: number) => {
+    if (!user) return;
+    if (!confirm('Are you sure you want to delete this article?')) return;
+    if (deletingIds[id]) return;
+    setDeletingIds(prev => ({ ...prev, [id]: true }));
+    try {
+      const res = await fetch(`/api/articles/${id}` , { method: 'DELETE' });
+      if (res.ok) {
+        setArticles(prev => prev.filter(a => a.id !== id));
+        setLikesById(prev => {
+          const copy = { ...prev };
+          delete copy[id];
+          return copy;
+        });
+      }
+    } catch (_) {
+    } finally {
+      setDeletingIds(prev => ({ ...prev, [id]: false }));
+    }
+  };
 
   return <ProtectedRoute roles={['user']}>
     <div className="page-content">
@@ -91,13 +113,22 @@ export default function MyArticles() {
                   </td>
                   <td>{likesById[a.id] ?? 0}</td>
                   <td>
-                    <Link 
-                      to={`/my-articles/edit/${a.id}`} 
-                      className="btn btn-sm btn-outline-success"
-                      state={{ article: a }}
-                    >
-                      Edit
-                    </Link>
+                    <div className="d-flex gap-2">
+                      <Link 
+                        to={`/my-articles/edit/${a.id}`} 
+                        className="btn btn-sm btn-outline-success"
+                        state={{ article: a }}
+                      >
+                        Edit
+                      </Link>
+                      <button 
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => handleDelete(a.id)}
+                        disabled={!!deletingIds[a.id]}
+                      >
+                        {deletingIds[a.id] ? 'Deleting…' : 'Delete'}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
