@@ -9,6 +9,7 @@ import Admin from './pages/Admin.tsx';
 import MyArticles from './pages/MyArticles.tsx';
 import AllUsers from './pages/AllUsers.tsx';
 import AdminAllArticles from './pages/AdminAllArticles.tsx';
+import Article from './pages/Article.tsx';
 
 interface Route {
   element: JSX.Element;
@@ -24,6 +25,7 @@ export default [
   Start,
   Login,
   Articles,
+  Article,
   Admin,
   MyArticles,
   AllUsers,
