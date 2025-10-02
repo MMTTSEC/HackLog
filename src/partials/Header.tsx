@@ -23,6 +23,9 @@ export default function Header() {
   const { user, refresh } = useAuth();
   const navigate = useNavigate();
   useEffect(() => { refresh(); }, []);
+  // Listen for auth changes when route changes to force refresh
+  const location = useLocation();
+  useEffect(() => { refresh(); }, [location.pathname]);
 
   return <header>
     <Navbar

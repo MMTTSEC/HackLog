@@ -25,7 +25,9 @@ export function useAuth() {
 
   useEffect(() => { refresh(); }, []);
 
-  return { user, loading, refresh, setUser };
+  // Provide a simple event-based notify so Header can refresh on login
+  const notifyAuthChanged = () => refresh();
+  return { user, loading, refresh, setUser, notifyAuthChanged };
 }
 
 
