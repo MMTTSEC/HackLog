@@ -119,6 +119,26 @@ export default function AdminAllArticles() {
     }
   };
 
+  const handleToggleFeatured = async (articleId: number, current: number) => {
+    const next = current ? 0 : 1;
+    // optimistic update
+    setArticles(prev => prev.map(a => a.id === articleId ? { ...a, featured: next } : a));
+    try {
+      const res = await fetch(`/api/articles/${articleId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ featured: next })
+      });
+      if (!res.ok) {
+        throw new Error(await res.text());
+      }
+    } catch (e: any) {
+      // revert on error
+      setArticles(prev => prev.map(a => a.id === articleId ? { ...a, featured: current } : a));
+      alert(e?.message || 'Failed to update featured');
+    }
+  };
+
   return <ProtectedRoute roles={['admin']}>
     <div className="page-content admin-table">
       <Container>
@@ -170,9 +190,19 @@ export default function AdminAllArticles() {
                         </td>
                         <td>{r.authorUsername}</td>
                         <td>
-                          <span className={`badge ${r.featured ? 'bg-success' : 'bg-secondary'}`}>
-                            {r.featured ? 'Yes' : 'No'}
-                          </span>
+                          <div className="form-check form-switch">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              role="switch"
+                              id={`featured-${r.id}`}
+                              checked={!!r.featured}
+                              onChange={() => handleToggleFeatured(r.id, r.featured)}
+                            />
+                            <label className="form-check-label" htmlFor={`featured-${r.id}`}>
+                              {r.featured ? 'On' : 'Off'}
+                            </label>
+                          </div>
                         </td>
                         <td>
                           {(r.tags || []).length === 0 ? (
