@@ -1,5 +1,5 @@
-//reactbits.dev/electric-border
-import { useEffect, useId, useLayoutEffect, useRef, CSSProperties, ReactNode } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import './ElectricBorder.css';
 
 type ElectricBorderProps = {
@@ -148,4 +148,3 @@ const ElectricBorder = ({
 };
 
 export default ElectricBorder;
-

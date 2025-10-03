@@ -4,6 +4,27 @@ import { useEffect, useRef, useState, createElement, useMemo, useCallback } from
 import { gsap } from 'gsap';
 import './TextType.css';
 
+type TextTypeProps = {
+  text: string[];
+  as?: string;
+  typingSpeed?: number;
+  initialDelay?: number;
+  pauseDuration?: number;
+  deletingSpeed?: number;
+  loop?: boolean;
+  className?: string;
+  showCursor?: boolean;
+  hideCursorWhileTyping?: boolean;
+  cursorCharacter?: string;
+  cursorClassName?: string;
+  cursorBlinkDuration?: number;
+  textColors?: string[];
+  variableSpeed?: any;
+  onSentenceComplete?: any;
+  startOnVisible?: boolean;
+  reverseMode?: boolean;
+};
+
 const TextType = ({
   text,
   as: Component = 'div',
@@ -24,7 +45,7 @@ const TextType = ({
   startOnVisible = false,
   reverseMode = false,
   ...props
-}) => {
+}: TextTypeProps) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -80,7 +101,7 @@ const TextType = ({
   useEffect(() => {
     if (!isVisible) return;
 
-    let timeout;
+    let timeout: ReturnType<typeof setTimeout>;
     const currentText = textArray[currentTextIndex];
     const processedText = reverseMode ? currentText.split('').reverse().join('') : currentText;
 
