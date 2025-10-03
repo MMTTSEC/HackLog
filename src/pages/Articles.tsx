@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/useAuth';
+import Toast from '../components/Toast';
 
 Articles.route = {
   path: '/articles',
@@ -19,7 +19,6 @@ type Article = {
 
 export default function Articles() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [articles, setArticles] = useState<Article[]>([]);
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +27,11 @@ export default function Articles() {
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [likesByArticleId, setLikesByArticleId] = useState<Record<number, number>>({});
   const [likingIds, setLikingIds] = useState<Record<number, boolean>>({});
+  const [toast, setToast] = useState<{ show: boolean; message: string; variant: 'success' | 'danger' | 'warning' }>({ 
+    show: false, 
+    message: '', 
+    variant: 'warning' 
+  });
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -112,7 +116,7 @@ export default function Articles() {
 
   const handleLike = async (articleId: number) => {
     if (!user) {
-      navigate('/login');
+      setToast({ show: true, message: 'Please log in to like articles', variant: 'warning' });
       return;
     }
     if (likingIds[articleId]) return;
@@ -244,6 +248,13 @@ export default function Articles() {
           </Col>
         </Row>
       </Container>
+
+      <Toast
+        show={toast.show}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={() => setToast({ ...toast, show: false })}
+      />
     </div>
   );
 }
