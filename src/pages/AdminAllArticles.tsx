@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import ProtectedRoute from '../utils/ProtectedRoute';
 
@@ -9,15 +10,155 @@ AdminAllArticles.route = {
 }
 
 export default function AdminAllArticles() {
+  const [articles, setArticles] = useState<any[]>([]);
+  const [usersById, setUsersById] = useState<Record<number, { id: number; username: string }>>({});
+  const [likesByArticleId, setLikesByArticleId] = useState<Record<number, number>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+    setError(null);
+
+    Promise.all([
+      fetch('/api/articles_with_tags'),
+      fetch('/api/users'),
+      fetch('/api/article_likes')
+    ])
+      .then(async ([articlesRes, usersRes, likesRes]) => {
+        const [articlesData, usersData, likesData] = await Promise.all([
+          articlesRes.ok ? articlesRes.json() : Promise.reject(await articlesRes.text()),
+          usersRes.ok ? usersRes.json() : Promise.reject(await usersRes.text()),
+          likesRes.ok ? likesRes.json() : Promise.resolve([])
+        ]);
+
+        if (!isMounted) return;
+
+       
+        const normalizedArticles = (Array.isArray(articlesData) ? articlesData : []).map((a: any) => ({
+          id: Number(a.id),
+          authorId: Number(a.authorId),
+          title: String(a.title || ''),
+          excerpt: String(a.excerpt || ''),
+          featured: Number(a.featured || 0),
+          created: String(a.created || ''),
+          modified: String(a.modified || ''),
+          tags: a.tags ? String(a.tags).split(',').map((s: string) => s.trim()).filter(Boolean) : []
+        }));
+
+        // Map users by id
+        const byId: Record<number, { id: number; username: string }> = {};
+        if (Array.isArray(usersData)) {
+          for (const u of usersData) {
+            const uid = Number(u.id);
+            byId[uid] = { id: uid, username: String(u.username || '') };
+          }
+        }
+
+        // Likes map
+        const likeCounts: Record<number, number> = {};
+        if (Array.isArray(likesData)) {
+          for (const l of likesData) {
+            const aId = Number(l.articleId);
+            const c = l.likeCount != null ? Number(l.likeCount) : 1;
+            likeCounts[aId] = (likeCounts[aId] || 0) + c;
+          }
+        }
+
+        setArticles(normalizedArticles);
+        setUsersById(byId);
+        setLikesByArticleId(likeCounts);
+      })
+      .catch((e) => {
+        if (!isMounted) return;
+        setError(typeof e === 'string' ? e : 'Failed to load admin articles');
+      })
+      .finally(() => {
+        if (!isMounted) return;
+        setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const rows = useMemo(() => {
+    return articles.map((a) => ({
+      ...a,
+      authorUsername: usersById[a.authorId]?.username || '—',
+      likeCount: likesByArticleId[a.id] ?? 0
+    }));
+  }, [articles, usersById, likesByArticleId]);
+
   return <ProtectedRoute roles={['admin']}>
     <div className="page-content">
       <Container>
-        <Row>
+        <Row className="mb-3">
           <Col>
             <h2>All Articles (Admin)</h2>
-            <p>Coming soon...</p>
+            <p className="text-muted">Review every article in the system.</p>
           </Col>
         </Row>
+
+        {error && (
+          <Row className="mb-3">
+            <Col>
+              <div className="alert alert-danger" role="alert">{error}</div>
+            </Col>
+          </Row>
+        )}
+
+        {loading ? (
+          <Row>
+            <Col>
+              <p className="text-muted">Loading…</p>
+            </Col>
+          </Row>
+        ) : (
+          <Row>
+            <Col>
+              <div className="table-responsive">
+                <table className="table table-dark table-striped align-middle">
+                  <thead>
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">Title</th>
+                      <th scope="col">Author</th>
+                      <th scope="col">Featured</th>
+                      <th scope="col">Tags</th>
+                      <th scope="col">Created</th>
+                      <th scope="col">Modified</th>
+                      <th scope="col">Likes</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((r) => (
+                      <tr key={r.id}>
+                        <td>{r.id}</td>
+                        <td>
+                          <a href={`/articles/${r.id}`} className="my-article-link">{r.title}</a>
+                        </td>
+                        <td>{r.authorUsername}</td>
+                        <td>{r.featured ? 'Yes' : 'No'}</td>
+                        <td>{(r.tags || []).join(', ')}</td>
+                        <td>{r.created ? new Date(r.created).toLocaleString() : ''}</td>
+                        <td>{r.modified ? new Date(r.modified).toLocaleString() : ''}</td>
+                        <td>{r.likeCount}</td>
+                      </tr>
+                    ))}
+                    {rows.length === 0 && (
+                      <tr>
+                        <td colSpan={8} className="text-center text-muted">No articles found.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </Col>
+          </Row>
+        )}
       </Container>
     </div>
   </ProtectedRoute>
