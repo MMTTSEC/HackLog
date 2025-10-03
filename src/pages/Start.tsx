@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import TextType from '../components/TextType';
+import FuzzyText from '../components/FuzzyText';
 
 Start.route = {
   path: '/',
@@ -86,7 +87,19 @@ export default function Start() {
         <div className="hero-overlay"></div>
         
         <div className="hero-content text-center text-white">
-          <h1 className="display-4 mb-3">Welcome to HackLog</h1>
+          <h1 className="display-4 mb-3 d-flex align-items-center justify-content-center flex-wrap" style={{ gap: '0.1rem' }}>
+            <span style={{ whiteSpace: 'nowrap' }}>Welcome to</span>
+            <FuzzyText 
+              fontSize="clamp(2.5rem, 8vw, 4rem)"
+              fontWeight={900}
+              color="#00ff00"
+              enableHover={true}
+              baseIntensity={0.2}
+              hoverIntensity={0.5}
+            >
+              HackLog
+            </FuzzyText>
+          </h1>
           <TextType 
             text={[
               "Your daily dose of cyber insight.",
