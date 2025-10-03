@@ -15,6 +15,7 @@ export default function AdminAllArticles() {
   const [likesByArticleId, setLikesByArticleId] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -92,6 +93,32 @@ export default function AdminAllArticles() {
     }));
   }, [articles, usersById, likesByArticleId]);
 
+  const handleDelete = async (articleId: number) => {
+    if (!window.confirm('Delete this article? This cannot be undone.')) return;
+    setDeletingId(articleId);
+    try {
+      const res = await fetch(`/api/articles/${articleId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || 'Failed to delete');
+      }
+      // Remove from local state
+      setArticles(prev => prev.filter(a => a.id !== articleId));
+      setLikesByArticleId(prev => {
+        const copy = { ...prev };
+        delete copy[articleId];
+        return copy;
+      });
+    } catch (e: any) {
+      alert(e?.message || 'Failed to delete');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return <ProtectedRoute roles={['admin']}>
     <div className="page-content">
       <Container>
@@ -131,6 +158,7 @@ export default function AdminAllArticles() {
                       <th scope="col">Created</th>
                       <th scope="col">Modified</th>
                       <th scope="col">Likes</th>
+                      <th scope="col" className="text-end">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -146,11 +174,21 @@ export default function AdminAllArticles() {
                         <td>{r.created ? new Date(r.created).toLocaleString() : ''}</td>
                         <td>{r.modified ? new Date(r.modified).toLocaleString() : ''}</td>
                         <td>{r.likeCount}</td>
+                        <td className="text-end">
+                          <a href={`/my-articles/edit/${r.id}`} className="btn btn-sm btn-outline-light me-2">Edit</a>
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleDelete(r.id)}
+                            disabled={deletingId === r.id}
+                          >
+                            {deletingId === r.id ? 'Deleting…' : 'Delete'}
+                          </button>
+                        </td>
                       </tr>
                     ))}
                     {rows.length === 0 && (
                       <tr>
-                        <td colSpan={8} className="text-center text-muted">No articles found.</td>
+                        <td colSpan={9} className="text-center text-muted">No articles found.</td>
                       </tr>
                     )}
                   </tbody>
