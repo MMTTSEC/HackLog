@@ -531,6 +531,44 @@ html, body {
   }
 }
 
+// Admin table styles
+.admin-table {
+  .admin-table-table {
+    border: 1px solid #2f3542;
+    border-radius: 12px;
+    overflow: hidden;
+
+    thead th {
+      background: #111;
+      color: #9fb0c3;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      border-bottom-color: #2f3542;
+    }
+
+    tbody tr:hover {
+      background: rgba(0, 255, 0, 0.04);
+    }
+
+    td, th {
+      vertical-align: middle;
+    }
+  }
+
+  .admin-tag {
+    display: inline-block;
+    background: rgba(0, 255, 0, 0.08);
+    border: 1px solid rgba(0, 255, 0, 0.35);
+    color: #9ef7b1;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}
+
 // Create Article - Tag selector styles
 .tag-select {
   background-color: #1a202c;

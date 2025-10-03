@@ -120,7 +120,7 @@ export default function AdminAllArticles() {
   };
 
   return <ProtectedRoute roles={['admin']}>
-    <div className="page-content">
+    <div className="page-content admin-table">
       <Container>
         <Row className="mb-3">
           <Col>
@@ -147,7 +147,7 @@ export default function AdminAllArticles() {
           <Row>
             <Col>
               <div className="table-responsive">
-                <table className="table table-dark table-striped align-middle">
+                <table className="table table-dark table-hover align-middle admin-table-table">
                   <thead>
                     <tr>
                       <th scope="col">ID</th>
@@ -169,8 +169,20 @@ export default function AdminAllArticles() {
                           <a href={`/articles/${r.id}`} className="my-article-link">{r.title}</a>
                         </td>
                         <td>{r.authorUsername}</td>
-                        <td>{r.featured ? 'Yes' : 'No'}</td>
-                        <td>{(r.tags || []).join(', ')}</td>
+                        <td>
+                          <span className={`badge ${r.featured ? 'bg-success' : 'bg-secondary'}`}>
+                            {r.featured ? 'Yes' : 'No'}
+                          </span>
+                        </td>
+                        <td>
+                          {(r.tags || []).length === 0 ? (
+                            <span className="text-muted">—</span>
+                          ) : (
+                            (r.tags || []).map((t: string, i: number) => (
+                              <span key={i} className="admin-tag me-1 mb-1">{t}</span>
+                            ))
+                          )}
+                        </td>
                         <td>{r.created ? new Date(r.created).toLocaleString() : ''}</td>
                         <td>{r.modified ? new Date(r.modified).toLocaleString() : ''}</td>
                         <td>{r.likeCount}</td>
