@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import ProtectedRoute from '../utils/ProtectedRoute';
 import ConfirmModal from '../components/ConfirmModal';
 import Toast from '../components/Toast';
+import ScrollableTable from '../components/ScrollableTable';
 
 AllUsers.route = {
   path: '/admin/users',
@@ -107,7 +108,7 @@ export default function AllUsers() {
         ) : (
           <Row>
             <Col>
-              <div className="table-responsive">
+              <ScrollableTable>
                 <table className="table table-dark table-hover align-middle admin-table-table">
                   <thead>
                     <tr>
@@ -172,7 +173,7 @@ export default function AllUsers() {
                     )}
                   </tbody>
                 </table>
-              </div>
+              </ScrollableTable>
             </Col>
           </Row>
         )}

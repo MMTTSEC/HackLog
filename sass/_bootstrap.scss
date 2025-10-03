@@ -617,10 +617,83 @@ html, body {
 
 // Admin table styles
 .admin-table {
+  .table-scroll-wrapper {
+    position: relative;
+  }
+
+  .table-scroll-controls {
+    display: none;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    
+    @media (max-width: 768px) {
+      display: flex;
+    }
+  }
+
+  .table-scroll-btn {
+    background: rgba(0, 255, 0, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    
+    &:hover:not(:disabled) {
+      background: rgba(0, 255, 0, 1);
+      transform: scale(1.1);
+    }
+    
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+    scroll-behavior: smooth;
+    
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 0, 0.5);
+      border-radius: 4px;
+      
+      &:hover {
+        background: rgba(0, 255, 0, 0.7);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      margin: 0;
+      border-radius: 0;
+    }
+  }
+
   .admin-table-table {
     border: 1px solid #2f3542;
     border-radius: 12px;
     overflow: hidden;
+    min-width: 800px;
 
     thead th {
       background: #111;
@@ -630,6 +703,7 @@ html, body {
       font-size: 0.8rem;
       letter-spacing: 0.06em;
       border-bottom-color: #2f3542;
+      white-space: nowrap;
     }
 
     tbody tr:hover {
@@ -638,6 +712,12 @@ html, body {
 
     td, th {
       vertical-align: middle;
+      padding: 0.75rem;
+      
+      @media (max-width: 768px) {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+      }
     }
   }
 
@@ -661,6 +741,11 @@ html, body {
       background-color: #1a202c;
       border-color: #00ff00;
       box-shadow: 0 0 0 0.2rem rgba(0, 255, 0, 0.15);
+    }
+    
+    @media (max-width: 768px) {
+      font-size: 0.75rem;
+      padding: 0.25rem 1.5rem 0.25rem 0.5rem;
     }
   }
 
@@ -701,11 +786,26 @@ html, body {
     padding: 0.35rem 0.75rem;
     border-radius: 6px;
     transition: all 0.2s ease;
+    white-space: nowrap;
     
     &:hover:not(:disabled) {
       background-color: #6c757d;
       border-color: #6c757d;
       color: #fff;
+    }
+    
+    @media (max-width: 768px) {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+    }
+  }
+
+  .btn-outline-danger {
+    white-space: nowrap;
+    
+    @media (max-width: 768px) {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
     }
   }
 
