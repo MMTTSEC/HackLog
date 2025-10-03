@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import ProtectedRoute from '../utils/ProtectedRoute';
+import ConfirmModal from '../components/ConfirmModal';
+import Toast from '../components/Toast';
 
 AdminAllArticles.route = {
   path: '/admin/articles',
@@ -16,6 +18,13 @@ export default function AdminAllArticles() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState<number | null>(null);
+  const [toast, setToast] = useState<{ show: boolean; message: string; variant: 'success' | 'danger' }>({ 
+    show: false, 
+    message: '', 
+    variant: 'success' 
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -93,29 +102,40 @@ export default function AdminAllArticles() {
     }));
   }, [articles, usersById, likesByArticleId]);
 
-  const handleDelete = async (articleId: number) => {
-    if (!window.confirm('Delete this article? This cannot be undone.')) return;
-    setDeletingId(articleId);
+  const handleDeleteClick = (articleId: number) => {
+    setArticleToDelete(articleId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!articleToDelete) return;
+    
+    setShowDeleteModal(false);
+    setDeletingId(articleToDelete);
+    
     try {
-      const res = await fetch(`/api/articles/${articleId}`, {
+      const res = await fetch(`/api/articles/${articleToDelete}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
       });
+      
       if (!res.ok) {
         const msg = await res.text();
         throw new Error(msg || 'Failed to delete');
       }
-      // Remove from local state
-      setArticles(prev => prev.filter(a => a.id !== articleId));
+      
+      setArticles(prev => prev.filter(a => a.id !== articleToDelete));
       setLikesByArticleId(prev => {
         const copy = { ...prev };
-        delete copy[articleId];
+        delete copy[articleToDelete];
         return copy;
       });
+      setToast({ show: true, message: 'Article deleted successfully!', variant: 'success' });
     } catch (e: any) {
-      alert(e?.message || 'Failed to delete');
+      setToast({ show: true, message: e?.message || 'Failed to delete article', variant: 'danger' });
     } finally {
       setDeletingId(null);
+      setArticleToDelete(null);
     }
   };
 
@@ -220,7 +240,7 @@ export default function AdminAllArticles() {
                           <a href={`/my-articles/edit/${r.id}`} className="btn btn-sm btn-outline-light me-2">Edit</a>
                           <button
                             className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleDelete(r.id)}
+                            onClick={() => handleDeleteClick(r.id)}
                             disabled={deletingId === r.id}
                           >
                             {deletingId === r.id ? 'Deleting…' : 'Delete'}
@@ -240,6 +260,24 @@ export default function AdminAllArticles() {
           </Row>
         )}
       </Container>
+
+      <ConfirmModal
+        show={showDeleteModal}
+        title="Delete Article"
+        message="Are you sure you want to delete this article? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setShowDeleteModal(false)}
+      />
+
+      <Toast
+        show={toast.show}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={() => setToast({ ...toast, show: false })}
+      />
     </div>
   </ProtectedRoute>
 }

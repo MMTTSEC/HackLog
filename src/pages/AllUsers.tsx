@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import ProtectedRoute from '../utils/ProtectedRoute';
+import ConfirmModal from '../components/ConfirmModal';
+import Toast from '../components/Toast';
 
 AllUsers.route = {
   path: '/admin/users',
@@ -15,6 +17,13 @@ export default function AllUsers() {
   const [error, setError] = useState<string | null>(null);
   const [savingUserId, setSavingUserId] = useState<number | null>(null);
   const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<number | null>(null);
+  const [toast, setToast] = useState<{ show: boolean; message: string; variant: 'success' | 'danger' }>({ 
+    show: false, 
+    message: '', 
+    variant: 'success' 
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -47,17 +56,28 @@ export default function AllUsers() {
     return () => { mounted = false; };
   }, []);
 
-  const handleDelete = async (userId: number) => {
-    if (!window.confirm('Delete this user? This cannot be undone.')) return;
+  const handleDeleteClick = (userId: number) => {
+    setUserToDelete(userId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
     
-    setDeletingUserId(userId);
-    const res = await fetch(`/api/users/${userId}`, { method: 'DELETE' });
+    setShowDeleteModal(false);
+    setDeletingUserId(userToDelete);
+    
+    const res = await fetch(`/api/users/${userToDelete}`, { method: 'DELETE' });
     
     if (res.ok) {
-      setUsers(prev => prev.filter(u => u.id !== userId));
+      setUsers(prev => prev.filter(u => u.id !== userToDelete));
+      setToast({ show: true, message: 'User deleted successfully!', variant: 'success' });
+    } else {
+      setToast({ show: true, message: 'Failed to delete user', variant: 'danger' });
     }
     
     setDeletingUserId(null);
+    setUserToDelete(null);
   };
 
   return <ProtectedRoute roles={['admin']}>
@@ -137,7 +157,7 @@ export default function AllUsers() {
                         <td className="text-end">
                           <button
                             className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleDelete(u.id)}
+                            onClick={() => handleDeleteClick(u.id)}
                             disabled={deletingUserId === u.id}
                           >
                             {deletingUserId === u.id ? 'Deleting…' : 'Delete'}
@@ -157,6 +177,24 @@ export default function AllUsers() {
           </Row>
         )}
       </Container>
+
+      <ConfirmModal
+        show={showDeleteModal}
+        title="Delete User"
+        message="Are you sure you want to delete this user? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setShowDeleteModal(false)}
+      />
+
+      <Toast
+        show={toast.show}
+        message={toast.message}
+        variant={toast.variant}
+        onClose={() => setToast({ ...toast, show: false })}
+      />
     </div>
   </ProtectedRoute>
 }

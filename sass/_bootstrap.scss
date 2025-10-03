@@ -726,3 +726,115 @@ html, body {
 .tag-chip-remove:hover {
   color: #ff6b6b;
 }
+
+// Confirm Modal styles
+.confirm-modal {
+  .modal-content {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border: 1px solid #4a5568;
+    border-radius: 12px;
+    color: #ffffff;
+  }
+
+  .modal-header {
+    .modal-title {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .btn-close {
+      filter: invert(1);
+      opacity: 0.7;
+      
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .modal-body {
+    color: #a0aec0;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .modal-footer {
+    .btn {
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary {
+      background-color: #4a5568;
+      border-color: #4a5568;
+      
+      &:hover {
+        background-color: #5a6578;
+        border-color: #5a6578;
+      }
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+      
+      &:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+      }
+    }
+  }
+}
+
+// Toast notification styles
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.custom-toast {
+  min-width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: none;
+
+  .toast-body {
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  &.toast-success {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: #ffffff;
+  }
+
+  &.toast-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: #ffffff;
+  }
+
+  &.toast-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: #212529;
+  }
+
+  &.toast-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: #ffffff;
+  }
+
+  .btn-close-white {
+    filter: invert(1);
+    opacity: 0.8;
+    
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
