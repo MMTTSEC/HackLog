@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import TextType from '../components/TextType';
 import FuzzyText from '../components/FuzzyText';
-import ElectricBorder from '../components/ElectricBorder';
 
 Start.route = {
   path: '/',
@@ -87,14 +86,7 @@ export default function Start() {
         
         <div className="hero-overlay"></div>
         
-        <ElectricBorder
-          color="#00ff00"
-          speed={1}
-          chaos={0.5}
-          thickness={3}
-          style={{ borderRadius: 10 }}
-        >
-          <div className="hero-content text-center text-white">
+        <div className="hero-content text-center text-white">
             <h1 className="display-4 mb-3 d-flex align-items-center justify-content-center flex-wrap" style={{ gap: '0.1rem' }}>
               <span style={{ whiteSpace: 'nowrap' }}>Welcome to</span>
               <FuzzyText 
@@ -123,8 +115,7 @@ export default function Start() {
               variableSpeed={undefined}
               onSentenceComplete={undefined}
             />
-          </div>
-        </ElectricBorder>
+        </div>
       </section>
 
       {/* Featured Blog Section */}
