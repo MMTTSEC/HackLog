@@ -67,5 +67,30 @@ public static class LoginRoutes
                 new { status = "Successful logout." }
             );
         });
+
+        // Custom endpoint for updating user roles (admin only)
+        App.MapPut("/api/users/{id}/role", (HttpContext context, string id, JsonElement bodyJson) =>
+        {
+            var currentUser = GetUser(context);
+            if (currentUser == null || (string)currentUser["role"] != "admin")
+            {
+                return RestResult.Parse(context, new { error = "Admin access required." });
+            }
+
+            var body = JSON.Parse(bodyJson.ToString());
+            var newRole = (string)body["role"];
+            
+            if (newRole != "user" && newRole != "admin")
+            {
+                return RestResult.Parse(context, new { error = "Invalid role. Must be 'user' or 'admin'." });
+            }
+
+            var result = SQLQueryOne(
+                "UPDATE users SET role = $role WHERE id = $id",
+                new { role = newRole, id = id }
+            );
+
+            return RestResult.Parse(context, result);
+        });
     }
 }

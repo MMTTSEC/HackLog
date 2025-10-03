@@ -13,6 +13,7 @@ export default function AllUsers() {
   const [users, setUsers] = useState<Array<{ id: number; created: string; email: string; username: string; role: string }>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [savingUserId, setSavingUserId] = useState<number | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -90,7 +91,32 @@ export default function AllUsers() {
                         <td>{u.username}</td>
                         <td className="text-muted">{u.email}</td>
                         <td>
-                          <span className={`badge ${u.role === 'admin' ? 'bg-primary' : 'bg-secondary'}`}>{u.role}</span>
+                          <select
+                            className="form-select form-select-sm bg-dark text-white border-secondary"
+                            value={u.role}
+                            disabled={savingUserId === u.id}
+                            onChange={async (e) => {
+                              const newRole = e.target.value;
+                              const previousRole = u.role;
+                              setSavingUserId(u.id);
+                              setUsers(prev => prev.map(x => x.id === u.id ? { ...x, role: newRole } : x));
+                              
+                              const res = await fetch(`/api/users/${u.id}/role`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ role: newRole })
+                              });
+                              
+                              if (!res.ok) {
+                                setUsers(prev => prev.map(x => x.id === u.id ? { ...x, role: previousRole } : x));
+                              }
+                              
+                              setSavingUserId(null);
+                            }}
+                          >
+                            <option value="user">user</option>
+                            <option value="admin">admin</option>
+                          </select>
                         </td>
                         <td>{u.created ? new Date(u.created).toLocaleDateString() : ''}</td>
                       </tr>
