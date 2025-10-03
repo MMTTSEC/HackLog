@@ -79,7 +79,6 @@ export default function Header() {
                   title="Admin"
                   key="admin-dropdown"
                   className={adminActive ? 'active' : ''}
-                  onClick={() => setTimeout(() => setExpanded(false), 200)}
                 >
                   {adminChildren.map((child, j) => (
                     <NavDropdown.Item
