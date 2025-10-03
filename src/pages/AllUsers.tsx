@@ -14,6 +14,7 @@ export default function AllUsers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [savingUserId, setSavingUserId] = useState<number | null>(null);
+  const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -45,6 +46,19 @@ export default function AllUsers() {
       });
     return () => { mounted = false; };
   }, []);
+
+  const handleDelete = async (userId: number) => {
+    if (!window.confirm('Delete this user? This cannot be undone.')) return;
+    
+    setDeletingUserId(userId);
+    const res = await fetch(`/api/users/${userId}`, { method: 'DELETE' });
+    
+    if (res.ok) {
+      setUsers(prev => prev.filter(u => u.id !== userId));
+    }
+    
+    setDeletingUserId(null);
+  };
 
   return <ProtectedRoute roles={['admin']}>
     <div className="page-content admin-table">
@@ -82,6 +96,7 @@ export default function AllUsers() {
                       <th scope="col">Email</th>
                       <th scope="col">Role</th>
                       <th scope="col">Created</th>
+                      <th scope="col" className="text-end">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -119,11 +134,20 @@ export default function AllUsers() {
                           </select>
                         </td>
                         <td>{u.created ? new Date(u.created).toLocaleDateString() : ''}</td>
+                        <td className="text-end">
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleDelete(u.id)}
+                            disabled={deletingUserId === u.id}
+                          >
+                            {deletingUserId === u.id ? 'Deleting…' : 'Delete'}
+                          </button>
+                        </td>
                       </tr>
                     ))}
                     {users.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="text-center text-muted">No users found.</td>
+                        <td colSpan={6} className="text-center text-muted">No users found.</td>
                       </tr>
                     )}
                   </tbody>
