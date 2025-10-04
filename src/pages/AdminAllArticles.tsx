@@ -165,7 +165,7 @@ export default function AdminAllArticles() {
       <Container>
         <Row className="mb-3">
           <Col>
-            <h2>All Articles (Admin)</h2>
+            <h2>All Articles</h2>
             <p className="text-muted">Review every article in the system.</p>
           </Col>
         </Row>
