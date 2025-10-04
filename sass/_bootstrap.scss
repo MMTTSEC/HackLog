@@ -127,9 +127,7 @@ html, body {
 
 // Landing page 
 .landing-page {
-  background-color: transparent;
   position: relative;
-  z-index: 1;
 }
 
 .hero-section {
@@ -140,18 +138,16 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
 }
 
 .hero-background {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   object-fit: cover;
-  z-index: -2;
-  pointer-events: none;
+  z-index: 0;
 }
 
 .hero-overlay {
@@ -160,8 +156,8 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: -1;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 1;
 }
 
 .hero-content {

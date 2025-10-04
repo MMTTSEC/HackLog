@@ -17,22 +17,8 @@ type Article = {
 };
 
 export default function Start() {
-  const heroRef = useRef<HTMLImageElement>(null);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (heroRef.current) {
-        const scrolled = window.pageYOffset;
-        const parallax = scrolled * 0.5;
-        heroRef.current.style.transform = `translateY(${parallax}px)`;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -79,7 +65,6 @@ export default function Start() {
       {/* Hero Section with Parallax */}
       <section className="hero-section">
         <img
-          ref={heroRef}
           className="hero-background"
           src="/images/hero.gif"
           alt="Hero background animation"
