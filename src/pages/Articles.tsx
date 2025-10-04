@@ -24,6 +24,7 @@ export default function Articles() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'most-liked'>('newest');
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [likesByArticleId, setLikesByArticleId] = useState<Record<number, number>>({});
   const [likingIds, setLikingIds] = useState<Record<number, boolean>>({});
@@ -89,7 +90,7 @@ export default function Articles() {
     fetchArticles().finally(() => setLoading(false));
   }, []);
 
-  // Filter articles based on search term and selected tag
+  // Filter and sort articles
   useEffect(() => {
     let filtered = articles;
 
@@ -111,8 +112,24 @@ export default function Articles() {
       );
     }
 
+    // Sort articles
+    filtered = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.created || '').getTime() - new Date(a.created || '').getTime();
+        case 'oldest':
+          return new Date(a.created || '').getTime() - new Date(b.created || '').getTime();
+        case 'most-liked':
+          const likesA = likesByArticleId[a.id] || 0;
+          const likesB = likesByArticleId[b.id] || 0;
+          return likesB - likesA;
+        default:
+          return 0;
+      }
+    });
+
     setFilteredArticles(filtered);
-  }, [searchTerm, selectedTag, articles]);
+  }, [searchTerm, selectedTag, sortBy, articles, likesByArticleId]);
 
   const handleLike = async (articleId: number) => {
     if (!user) {
@@ -168,6 +185,17 @@ export default function Articles() {
           {/* Sidebar Filter */}
           <Col lg={3} className="mb-4">
             <div className="filter-sidebar">
+              <h5 className="filter-title">Sort by</h5>
+              <select 
+                className="form-select tag-filter mb-3"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest' | 'most-liked')}
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="most-liked">Most Liked</option>
+              </select>
+              
               <h5 className="filter-title">Filter by Tag</h5>
               <select 
                 className="form-select tag-filter"
