@@ -1,0 +1,94 @@
+// Footer styles
+.footer {
+  background-color: #1a1a1a;
+  position: relative;
+
+  .footer-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-heading {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-text {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: 0.5rem;
+
+      a {
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        position: relative;
+        padding-left: 1.25rem;
+
+        &::before {
+          content: '→';
+          position: absolute;
+          left: 0;
+          opacity: 0;
+          transition: all 0.3s ease;
+        }
+
+        &:hover {
+          color: #ffffff;
+          padding-left: 1.25rem;
+          transform: translateX(5px);
+
+          &::before {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 1rem;
+
+    p {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .footer {
+    .footer-heading {
+      font-size: 1.1rem;
+    }
+
+    .footer-text {
+      font-size: 0.9rem;
+    }
+
+    .footer-wave {
+      height: 40px;
+
+      svg {
+        height: 40px;
+      }
+    }
+  }
+}
+

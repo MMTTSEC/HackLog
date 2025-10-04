@@ -17,7 +17,7 @@ type Article = {
 };
 
 export default function Start() {
-  const heroRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLImageElement>(null);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -78,10 +78,11 @@ export default function Start() {
     <div className="landing-page">
       {/* Hero Section with Parallax */}
       <section className="hero-section">
-        <div 
+        <img
           ref={heroRef}
-          className="hero-background" 
-          style={{ backgroundImage: 'url(/images/hero.gif)' }}
+          className="hero-background"
+          src="/images/hero.gif"
+          alt="Hero background animation"
         />
         
         <div className="hero-overlay"></div>

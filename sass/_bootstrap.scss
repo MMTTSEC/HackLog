@@ -126,6 +126,12 @@ html, body {
 }
 
 // Landing page 
+.landing-page {
+  background-color: transparent;
+  position: relative;
+  z-index: 1;
+}
+
 .hero-section {
   position: relative;
   width: 100%;
@@ -134,18 +140,18 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: transparent;
 }
 
 .hero-background {
-  position: absolute;
-  top: -20%;
+  position: fixed;
+  top: 0;
   left: 0;
   width: 100%;
-  height: 120%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  height: 100vh;
+  object-fit: cover;
   z-index: -2;
+  pointer-events: none;
 }
 
 .hero-overlay {
@@ -173,7 +179,8 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 4rem 2rem 0 2rem;
+  margin-bottom: 0;
 }
 
 // Custom article card styling
