@@ -17,17 +17,23 @@ A modern web application for sharing cybersecurity articles with role-based acce
 
 
 ## 📸 Screenshots
-Add these screenshots to `screenshots/` folder:
-1. `homepage.png` - Landing page with hero section
-2. `articles.png` - Article listing with filters
-3. `admin.png` - Admin panel
-4. `create-article.png` - Article creation form
 
-## 🎯 VG Requirements Met
-- ✅ Role-based access control (Admin/User/Visitor)
-- ✅ Advanced data management (SQLite views + REST API)
-- ✅ Search functionality (full-text + filtering)
-- ✅ Responsive design with dark mode
+ ## Landing page with hero section
+ ![](./screenshots/homepage.gif)
+
+ 
+## Article listing with filters
+| ![](./screenshots/Articles1.png) | ![](./screenshots/Articles2.png) |
+|:---:|:---:|
+
+
+## Admin panel
+
+| ![](./screenshots/admin1.png) | ![](./screenshots/admin2.png) |
+|:---:|:---:|
+
+
+
 
 ## 🔑 Test Credentials
 - **Admin**: `admin@admin.com` / `admin`
