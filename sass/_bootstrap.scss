@@ -175,8 +175,8 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem 0 2rem;
-  margin-bottom: 0;
+  padding: 4rem 2rem;
+  margin-bottom: 6rem;
 }
 
 // Custom article card styling
@@ -510,7 +510,7 @@ html, body {
 .page-content {
   min-height: 100vh;
   padding-top: 5rem; 
-  padding-bottom: 2rem;
+  padding-bottom: 8rem;
   background-color: #1a1a1a;
   color: #ffffff;
 
@@ -623,6 +623,8 @@ html, body {
 
 // Admin table styles
 .admin-table {
+  padding-bottom: 8rem;
+  
   .table-scroll-wrapper {
     position: relative;
   }
